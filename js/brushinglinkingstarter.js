@@ -100,10 +100,8 @@ d3.csv("data/iris.csv").then((data) => {
       })
       .style("opacity", 0.5);
 
-    //TODO: Define a brush
-
-    //TODO: Add brush to the svg
-    
+    // add brush
+    svg1.call(d3.brush().extent([[0,0], [width, height]]));
   }
 
   //TODO: Scatterplot 2 (show Sepal width on x-axis and Petal width on y-axis)
@@ -168,14 +166,13 @@ d3.csv("data/iris.csv").then((data) => {
       })
       .style("opacity", 0.5);
 
-    //TODO: Define a brush
-
-    //TODO: Add brush to the svg
+    // add brush
+    svg2.call(d3.brush().extent([[0,0], [width, height]]));
     
   }
 
-
-  //TODO: Barchart with counts of different species
+d3.csv("data/iris_count.csv").then((data) => {
+   //TODO: Barchart with counts of different species
 {
  
     //Add X axis
@@ -188,12 +185,41 @@ d3.csv("data/iris.csv").then((data) => {
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(x3));
 
-  
+    let maxY = d3.max(data, function(d) {return d.Count;})
+    let yScale = d3.scaleLinear()
+                .domain([0, maxY])
+                .range([height, 0]);
+
+    console.log(maxY);
+
+    // add y axis to SVG
+    svg3.append("g")
+      .attr("transform", "translate(" + (margin.left-60) + ",0)")
+      .call(d3.axisLeft(yScale));
+
+    
+    svg3.selectAll('.bar')
+      .data(data)
+      .enter().append('rect')
+      .attr('class', 'bar')
+      .attr('x', function(d) {return x3(d.Species) + margin.left - 50})
+      .attr('y', function(d) {return yScale(d.Count) + margin.top - 10})
+      .attr('width', x3.bandwidth() - 20)
+      .attr('height', function(d) {return height - yScale(d.Count);})
+      .attr('fill', function (d) {
+        return color(d.Species);
+      })
+
     //TODO: Define a brush
 
     //TODO: Add brush to the svg
     
   }
+})
+ 
+
+
+
 
 
 
