@@ -35,6 +35,7 @@ var color = d3
   .domain(["setosa", "versicolor", "virginica"])
   .range(["#FF7F50", "#21908dff", "#fde725ff"]);
 
+
 // Read data and make plots 
 d3.csv("data/iris.csv").then((data) => {
   
@@ -100,8 +101,12 @@ d3.csv("data/iris.csv").then((data) => {
       })
       .style("opacity", 0.5);
 
+    var brush1 = d3.brush()
+					.extent([[0,0], [width, height]])
+					.on('brush', updateChart1);
+
     // add brush
-    svg1.call(d3.brush().extent([[0,0], [width, height]]));
+    svg1.append('g').attr('class', 'brush').call(brush1);
   }
 
   //TODO: Scatterplot 2 (show Sepal width on x-axis and Petal width on y-axis)
@@ -147,7 +152,7 @@ d3.csv("data/iris.csv").then((data) => {
       );
 
     // Add dots
-    var myCircle1 = svg2
+    var myCircle2 = svg2
       .append("g")
       .selectAll("circle")
       .data(data)
@@ -166,8 +171,12 @@ d3.csv("data/iris.csv").then((data) => {
       })
       .style("opacity", 0.5);
 
+    var brush2 = d3.brush()
+    				.extent([[0,0], [width, height]])
+            .on('brush', updateChart2);
+    				
     // add brush
-    svg2.call(d3.brush().extent([[0,0], [width, height]]));
+    svg2.append('g').attr('class', 'brush').call(brush2);
     
   }
 
@@ -190,7 +199,6 @@ d3.csv("data/iris_count.csv").then((data) => {
                 .domain([0, maxY])
                 .range([height, 0]);
 
-    console.log(maxY);
 
     // add y axis to SVG
     svg3.append("g")
@@ -229,18 +237,19 @@ d3.csv("data/iris_count.csv").then((data) => {
   //Removes existing brushes from svg
     function clear() {
         svg1.call(brush1.move, null);
-        svg2.call(brush2.move, null);
+        svg2.call(brush2.move, null);  
     }
 
     //Is called when we brush on scatterplot #1
     function updateChart1(brushEvent) {
         extent = brushEvent.selection;
-    
+
         //TODO: Check all the circles that are within the brush region in Scatterplot 1
- 
-    
+ 		   myCircle1.classed('selected', function(d) {return isBrushed(extent, x1(d.Sepal_Length), y1(d.Petal_Length));});
         //TODO: Select all the data points in Scatterplot 2 which have the same id as those selected in Scatterplot 1
+        
       
+
     }
 
     //Is called when we brush on scatterplot #2
@@ -249,8 +258,9 @@ d3.csv("data/iris_count.csv").then((data) => {
       var selectedSpecies = new Set();
 
       //TODO: Check all the circles that are within the brush region in Scatterplot 2
-
+      myCircle2.classed('selected', function(d) {return isBrushed(extent, x2(d.Sepal_Width), y2(d.Petal_Width));});
       //TODO: Select all the data points in Scatterplot 1 which have the same id as those selected in Scatterplot 2
+      
 
       //TODO: Select bars in bar chart based on species selected in Scatterplot 2
 
@@ -267,3 +277,6 @@ d3.csv("data/iris_count.csv").then((data) => {
       return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1; // This return TRUE or FALSE depending on if the points is in the selected area
     }
 });
+
+// Potential example:
+//https://www.d3-graph-gallery.com/graph/interactivity_brush.html
