@@ -39,6 +39,8 @@ var color = d3
 // Read data and make plots 
 d3.csv("data/iris.csv").then((data) => {
   
+  console.log(d3.count(data, d => d.Species == 'versicolor'));
+
   //Scatterplot 1
   {
     var xKey1 = "Sepal_Length";
@@ -177,8 +179,12 @@ d3.csv("data/iris.csv").then((data) => {
     				
     // add brush
     svg2.append('g').attr('class', 'brush').call(brush2);
+
+
     
   }
+
+  
 
 d3.csv("data/iris_count.csv").then((data) => {
    //TODO: Barchart with counts of different species
@@ -206,7 +212,7 @@ d3.csv("data/iris_count.csv").then((data) => {
       .call(d3.axisLeft(yScale));
 
     
-    svg3.selectAll('.bar')
+    var myBar = svg3.selectAll('.bar')
       .data(data)
       .enter().append('rect')
       .attr('class', 'bar')
@@ -245,9 +251,9 @@ d3.csv("data/iris_count.csv").then((data) => {
         extent = brushEvent.selection;
 
         //TODO: Check all the circles that are within the brush region in Scatterplot 1
- 		   myCircle1.classed('selected', function(d) {return isBrushed(extent, x1(d.Sepal_Length), y1(d.Petal_Length));});
+ 		     myCircle1.classed('selected', function(d) {return isBrushed(extent, x1(d.Sepal_Length), y1(d.Petal_Length));});
         //TODO: Select all the data points in Scatterplot 2 which have the same id as those selected in Scatterplot 1
-        
+        myCircle2.classed('selected', function(d) {return isBrushed(extent, x1(d.Sepal_Length), y1(d.Petal_Length));});
       
 
     }
@@ -260,9 +266,23 @@ d3.csv("data/iris_count.csv").then((data) => {
       //TODO: Check all the circles that are within the brush region in Scatterplot 2
       myCircle2.classed('selected', function(d) {return isBrushed(extent, x2(d.Sepal_Width), y2(d.Petal_Width));});
       //TODO: Select all the data points in Scatterplot 1 which have the same id as those selected in Scatterplot 2
-      
+      myCircle1.classed('selected', function(d) {
+
+        if(isBrushed(extent, x2(d.Sepal_Width), y2(d.Petal_Width))) {
+          selectedSpecies.add(d.Species)
+        }
+
+        return isBrushed(extent, x2(d.Sepal_Width), y2(d.Petal_Width));
+
+
+      });
 
       //TODO: Select bars in bar chart based on species selected in Scatterplot 2
+      myBar.classed('selected', function(d) {
+
+        return selectedSpecies.has(d.Species);
+
+      })
 
     }
 
