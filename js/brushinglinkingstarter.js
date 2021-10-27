@@ -39,7 +39,7 @@ var color = d3
 // Read data and make plots 
 d3.csv("data/iris.csv").then((data) => {
   
-  console.log(d3.count(data, d => d.Species == 'versicolor'));
+ 
 
   //Scatterplot 1
   {
@@ -184,12 +184,7 @@ d3.csv("data/iris.csv").then((data) => {
     
   }
 
-  
-
-d3.csv("data/iris_count.csv").then((data) => {
-   //TODO: Barchart with counts of different species
-{
- 
+ {
     //Add X axis
     var x3 = d3
       .scaleBand()
@@ -202,7 +197,7 @@ d3.csv("data/iris_count.csv").then((data) => {
 
     let maxY = d3.max(data, function(d) {return d.Count;})
     let yScale = d3.scaleLinear()
-                .domain([0, maxY])
+                .domain([0, 50])
                 .range([height, 0]);
 
 
@@ -217,9 +212,9 @@ d3.csv("data/iris_count.csv").then((data) => {
       .enter().append('rect')
       .attr('class', 'bar')
       .attr('x', function(d) {return x3(d.Species) + margin.left - 50})
-      .attr('y', function(d) {return yScale(d.Count) + margin.top - 10})
+      .attr('y', function(d) {return margin.top - 10})
       .attr('width', x3.bandwidth() - 20)
-      .attr('height', function(d) {return height - yScale(d.Count);})
+      .attr('height', function(d) {return height;})
       .attr('fill', function (d) {
         return color(d.Species);
       })
@@ -229,7 +224,7 @@ d3.csv("data/iris_count.csv").then((data) => {
     //TODO: Add brush to the svg
     
   }
-})
+
  
 
 
