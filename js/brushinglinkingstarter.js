@@ -39,7 +39,6 @@ var color = d3
 // Read data and make plots 
 d3.csv("data/iris.csv").then((data) => {
   
- 
 
   //Scatterplot 1
   {
@@ -103,16 +102,17 @@ d3.csv("data/iris.csv").then((data) => {
       })
       .style("opacity", 0.5);
 
+    // define brush
     var brush1 = d3.brush()
 					.extent([[0,0], [width, height]])
-          .on('start', clear)
-					.on('brush', updateChart1);
+          			.on('start', clear) // clear existing brushes
+					.on('brush', updateChart1); // update charts accordingly
 
     // add brush
     svg1.call(brush1);
   }
 
-  //TODO: Scatterplot 2 (show Sepal width on x-axis and Petal width on y-axis)
+  //Scatterplot 2 (show Sepal width on x-axis and Petal width on y-axis)
   {
     var xKey2 = "Sepal_Width";
     var yKey2 = "Petal_Width";
@@ -174,19 +174,19 @@ d3.csv("data/iris.csv").then((data) => {
       })
       .style("opacity", 0.5);
 
+    // define brush
     var brush2 = d3.brush()
     				.extent([[0,0], [width, height]])
-            .on('start', clear)
-            .on('brush', updateChart2);
+		            .on('start', clear) // clear existing brushes
+		            .on('brush', updateChart2); // update charts accordingly
             
     				
     // add brush
     svg2.call(brush2);
-
-
-    
   }
 
+
+ // Bar chart showing counts of species
  {
     //Add X axis
     var x3 = d3
@@ -209,7 +209,7 @@ d3.csv("data/iris.csv").then((data) => {
       .attr("transform", "translate(" + (margin.left-60) + ",0)")
       .call(d3.axisLeft(yScale));
 
-    
+    // add bars
     var myBar = svg3.selectAll('.bar')
       .data(data)
       .enter().append('rect')
@@ -244,9 +244,9 @@ d3.csv("data/iris.csv").then((data) => {
     function updateChart1(brushEvent) {
         extent = brushEvent.selection;
 
-        //TODO: Check all the circles that are within the brush region in Scatterplot 1
- 		     myCircle1.classed('selected', function(d) {return isBrushed(extent, x1(d.Sepal_Length), y1(d.Petal_Length));});
-        //TODO: Select all the data points in Scatterplot 2 which have the same id as those selected in Scatterplot 1
+        // Check all the circles that are within the brush region in Scatterplot 1
+ 		    myCircle1.classed('selected', function(d) {return isBrushed(extent, x1(d.Sepal_Length), y1(d.Petal_Length));});
+        // Select all the data points in Scatterplot 2 which have the same id as those selected in Scatterplot 1
         myCircle2.classed('selected', function(d) {return isBrushed(extent, x1(d.Sepal_Length), y1(d.Petal_Length));});
       
 
@@ -257,11 +257,12 @@ d3.csv("data/iris.csv").then((data) => {
       extent = brushEvent.selection;
       var selectedSpecies = new Set();
 
-      //TODO: Check all the circles that are within the brush region in Scatterplot 2
+      //Check all the circles that are within the brush region in Scatterplot 2
       myCircle2.classed('selected', function(d) {return isBrushed(extent, x2(d.Sepal_Width), y2(d.Petal_Width));});
-      //TODO: Select all the data points in Scatterplot 1 which have the same id as those selected in Scatterplot 2
+      //Select all the data points in Scatterplot 1 which have the same id as those selected in Scatterplot 2
       myCircle1.classed('selected', function(d) {
 
+      	// if this is brushed, add the species to be highlighted
         if(isBrushed(extent, x2(d.Sepal_Width), y2(d.Petal_Width))) {
           selectedSpecies.add(d.Species)
         }
@@ -271,7 +272,7 @@ d3.csv("data/iris.csv").then((data) => {
 
       });
 
-      //TODO: Select bars in bar chart based on species selected in Scatterplot 2
+      //Select bars in bar chart based on species selected in Scatterplot 2
       myBar.classed('selected', function(d) {
 
         return selectedSpecies.has(d.Species);
@@ -292,5 +293,5 @@ d3.csv("data/iris.csv").then((data) => {
     }
 });
 
-// Potential example:
-//https://www.d3-graph-gallery.com/graph/interactivity_brush.html
+// Used as an example:
+// https://www.d3-graph-gallery.com/graph/interactivity_brush.html
